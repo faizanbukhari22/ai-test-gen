@@ -1,6 +1,7 @@
 import click
 import os
 import json
+from datetime import datetime
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -39,13 +40,16 @@ def main(req):
         # 3. Export Logic (Production Ready)
         os.makedirs("data/output", exist_ok=True)
         
+        # Generate timestamp for unique filenames
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        
         # Save Gherkin File
-        gherkin_path = os.path.join("data/output", "generated_test.feature")
+        gherkin_path = os.path.join("data/output", f"generated_test_{timestamp}.feature")
         with open(gherkin_path, "w") as f:
             f.write(result.gherkin_feature)
         
         # Save JSON Data (for Jira/TestRail integration)
-        json_path = os.path.join("data/output", "test_data.json")
+        json_path = os.path.join("data/output", f"test_data_{timestamp}.json")
         with open(json_path, "w") as f:
             json_data = [tc.model_dump() for tc in result.test_cases]
             json.dump(json_data, f, indent=4)
